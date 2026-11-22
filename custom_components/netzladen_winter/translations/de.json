@@ -1,0 +1,249 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Speicher und Anlage",
+        "description": "Wähle die Messwerte des Speichers und gib an, welche Geräte vorhanden sind.",
+        "data": {
+          "battery_soc": "Aktueller Ladestand",
+          "min_soc": "Mindest-SoC",
+          "max_soc": "Maximal-SoC (Messwert)",
+          "capacity_kwh": "Speicherkapazität",
+          "capacity_sensor": "Sensor für Speicherkapazität (optional)",
+          "backup_percent": "Backupreserve",
+          "backup_soc": "Sensor für Backupreserve (optional)",
+          "usable_soc": "Ladestand ist auf den nutzbaren Bereich skaliert",
+          "load_source": "Quelle für den Hausverbrauch",
+          "has_heat_pump": "Wärmepumpe vorhanden",
+          "has_wallbox": "Wallbox vorhanden"
+        },
+        "data_description": {
+          "capacity_kwh": "Nennkapazität in kWh. Ist ein Sensor ausgewählt, hat dessen Wert Vorrang.",
+          "backup_percent": "Wird verwendet, wenn kein Backupreserve-Sensor ausgewählt ist.",
+          "usable_soc": "Bei der bisherigen Sungrow-Anbindung aktiv lassen. Für einen absoluten 0–100-%-Ladestand ausschalten."
+        }
+      },
+      "consumption": {
+        "title": "Energiezähler",
+        "description": "Wähle fortlaufende Gesamtenergiezähler. Bei einer Wallbox muss der gemessene Hausverbrauch den Ladestrom zunächst enthalten.",
+        "data": {
+          "house_energy": "Hausverbrauch gesamt",
+          "pv_energy": "PV-Erzeugung gesamt",
+          "second_pv_energy": "Zusätzliche PV-Erzeugung (optional)",
+          "grid_import": "Netzbezug gesamt",
+          "grid_export": "Netzeinspeisung gesamt",
+          "battery_charge": "Batterieladung gesamt",
+          "battery_discharge": "Batterieentladung gesamt",
+          "heat_pump_energy": "Stromverbrauch der Wärmepumpe gesamt",
+          "wallbox_energy": "Ladeenergie der Wallbox gesamt"
+        }
+      },
+      "planning": {
+        "title": "Prognose und Ladeplanung",
+        "description": "Wähle die Prognosequellen und wann die Netzladung laufen darf.",
+        "data": {
+          "pv_today": "Solcast-Stundenprognose heute",
+          "pv_tomorrow": "Solcast-Stundenprognose morgen (optional)",
+          "weather": "Stündliche Wetterprognose (optional)",
+          "outdoor_temperature": "Außentemperatur (optional)",
+          "charge_w": "Netzladeleistung",
+          "low_pv_kwh": "PV-Schwelle für Vollladung",
+          "buffer_kwh": "Energiepuffer",
+          "fallback_load_kw": "Hauslast bis Messwerte vorliegen",
+          "end_time": "Ladeende (lokale Uhrzeit)",
+          "winter_months": "Aktive Monate (1 = Januar)"
+        },
+        "data_description": {
+          "pv_today": "Der Sensor muss das Attribut detailedHourly liefern.",
+          "end_time": "Das Fenster beginnt um Mitternacht. Gib das Ende auf volle Minuten genau an.",
+          "fallback_load_kw": "Geschätzte mittlere Hauslast für Stunden ohne ausreichende Lerndaten."
+        }
+      },
+      "operation": {
+        "title": "Betriebsart",
+        "description": "In der Vorschau berechnet die Integration den Ladeplan. Aktive Steuerung setzt kompatible Wechselrichter-Entitäten voraus.",
+        "data": {
+          "control_enabled": "Aktive Speichersteuerung"
+        }
+      },
+      "controls": {
+        "title": "Wechselrichtersteuerung",
+        "description": "Wähle die schreibbaren Regler und die tatsächlichen Rückmeldungen vom Wechselrichter. Die Texte müssen mit den Auswahlmöglichkeiten und Rückmeldungen übereinstimmen.",
+        "data": {
+          "charge_limit": "Regler für maximale Ladeleistung",
+          "forced_power": "Regler für Zwangsladeleistung",
+          "max_soc_control": "Regler für maximalen SoC",
+          "ems_control": "EMS-Modus (Regler)",
+          "command_control": "Batteriebefehl (Regler)",
+          "ems_state": "Tatsächlicher EMS-Modus",
+          "command_state": "Tatsächlicher Batteriebefehl",
+          "forced_mode": "Option für Zwangsmodus",
+          "normal_mode": "Option für Eigenverbrauch",
+          "charge_option": "Option für Zwangsladung",
+          "stop_option": "Option für Stopp",
+          "interlock_automation": "Konkurrierende Automation (optional)"
+        },
+        "data_description": {
+          "interlock_automation": "Die Steuerung greift nur ein, wenn die ausgewählte Automation als ausgeschaltet gemeldet wird."
+        }
+      }
+    },
+    "error": {
+      "duplicate_entities": "Bitte wähle unterschiedliche Entitäten.",
+      "invalid_time": "Wähle ein Ladeende nach Mitternacht auf volle Minuten genau.",
+      "no_months": "Wähle mindestens einen Monat.",
+      "invalid_options": "Gib zwei unterschiedliche Optionswerte ein."
+    },
+    "abort": {
+      "already_configured": "Netzladen Winter ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Speicher und Anlage",
+        "description": "Wähle die Messwerte des Speichers und gib an, welche Geräte vorhanden sind.",
+        "data": {
+          "battery_soc": "Aktueller Ladestand",
+          "min_soc": "Mindest-SoC",
+          "max_soc": "Maximal-SoC (Messwert)",
+          "capacity_kwh": "Speicherkapazität",
+          "capacity_sensor": "Sensor für Speicherkapazität (optional)",
+          "backup_percent": "Backupreserve",
+          "backup_soc": "Sensor für Backupreserve (optional)",
+          "usable_soc": "Ladestand ist auf den nutzbaren Bereich skaliert",
+          "load_source": "Quelle für den Hausverbrauch",
+          "has_heat_pump": "Wärmepumpe vorhanden",
+          "has_wallbox": "Wallbox vorhanden"
+        },
+        "data_description": {
+          "capacity_kwh": "Nennkapazität in kWh. Ist ein Sensor ausgewählt, hat dessen Wert Vorrang.",
+          "backup_percent": "Wird verwendet, wenn kein Backupreserve-Sensor ausgewählt ist.",
+          "usable_soc": "Bei der bisherigen Sungrow-Anbindung aktiv lassen. Für einen absoluten 0–100-%-Ladestand ausschalten."
+        }
+      },
+      "user": {
+        "title": "Speicher und Anlage",
+        "description": "Wähle die Messwerte des Speichers und gib an, welche Geräte vorhanden sind.",
+        "data": {
+          "battery_soc": "Aktueller Ladestand",
+          "min_soc": "Mindest-SoC",
+          "max_soc": "Maximal-SoC (Messwert)",
+          "capacity_kwh": "Speicherkapazität",
+          "capacity_sensor": "Sensor für Speicherkapazität (optional)",
+          "backup_percent": "Backupreserve",
+          "backup_soc": "Sensor für Backupreserve (optional)",
+          "usable_soc": "Ladestand ist auf den nutzbaren Bereich skaliert",
+          "load_source": "Quelle für den Hausverbrauch",
+          "has_heat_pump": "Wärmepumpe vorhanden",
+          "has_wallbox": "Wallbox vorhanden"
+        },
+        "data_description": {
+          "capacity_kwh": "Nennkapazität in kWh. Ist ein Sensor ausgewählt, hat dessen Wert Vorrang.",
+          "backup_percent": "Wird verwendet, wenn kein Backupreserve-Sensor ausgewählt ist.",
+          "usable_soc": "Bei der bisherigen Sungrow-Anbindung aktiv lassen. Für einen absoluten 0–100-%-Ladestand ausschalten."
+        }
+      },
+      "consumption": {
+        "title": "Energiezähler",
+        "description": "Wähle fortlaufende Gesamtenergiezähler. Bei einer Wallbox muss der gemessene Hausverbrauch den Ladestrom zunächst enthalten.",
+        "data": {
+          "house_energy": "Hausverbrauch gesamt",
+          "pv_energy": "PV-Erzeugung gesamt",
+          "second_pv_energy": "Zusätzliche PV-Erzeugung (optional)",
+          "grid_import": "Netzbezug gesamt",
+          "grid_export": "Netzeinspeisung gesamt",
+          "battery_charge": "Batterieladung gesamt",
+          "battery_discharge": "Batterieentladung gesamt",
+          "heat_pump_energy": "Stromverbrauch der Wärmepumpe gesamt",
+          "wallbox_energy": "Ladeenergie der Wallbox gesamt"
+        }
+      },
+      "planning": {
+        "title": "Prognose und Ladeplanung",
+        "description": "Wähle die Prognosequellen und wann die Netzladung laufen darf.",
+        "data": {
+          "pv_today": "Solcast-Stundenprognose heute",
+          "pv_tomorrow": "Solcast-Stundenprognose morgen (optional)",
+          "weather": "Stündliche Wetterprognose (optional)",
+          "outdoor_temperature": "Außentemperatur (optional)",
+          "charge_w": "Netzladeleistung",
+          "low_pv_kwh": "PV-Schwelle für Vollladung",
+          "buffer_kwh": "Energiepuffer",
+          "fallback_load_kw": "Hauslast bis Messwerte vorliegen",
+          "end_time": "Ladeende (lokale Uhrzeit)",
+          "winter_months": "Aktive Monate (1 = Januar)"
+        },
+        "data_description": {
+          "pv_today": "Der Sensor muss das Attribut detailedHourly liefern.",
+          "end_time": "Das Fenster beginnt um Mitternacht. Gib das Ende auf volle Minuten genau an.",
+          "fallback_load_kw": "Geschätzte mittlere Hauslast für Stunden ohne ausreichende Lerndaten."
+        }
+      },
+      "operation": {
+        "title": "Betriebsart",
+        "description": "In der Vorschau berechnet die Integration den Ladeplan. Aktive Steuerung setzt kompatible Wechselrichter-Entitäten voraus.",
+        "data": {
+          "control_enabled": "Aktive Speichersteuerung"
+        }
+      },
+      "controls": {
+        "title": "Wechselrichtersteuerung",
+        "description": "Wähle die schreibbaren Regler und die tatsächlichen Rückmeldungen vom Wechselrichter. Die Texte müssen mit den Auswahlmöglichkeiten und Rückmeldungen übereinstimmen.",
+        "data": {
+          "charge_limit": "Regler für maximale Ladeleistung",
+          "forced_power": "Regler für Zwangsladeleistung",
+          "max_soc_control": "Regler für maximalen SoC",
+          "ems_control": "EMS-Modus (Regler)",
+          "command_control": "Batteriebefehl (Regler)",
+          "ems_state": "Tatsächlicher EMS-Modus",
+          "command_state": "Tatsächlicher Batteriebefehl",
+          "forced_mode": "Option für Zwangsmodus",
+          "normal_mode": "Option für Eigenverbrauch",
+          "charge_option": "Option für Zwangsladung",
+          "stop_option": "Option für Stopp",
+          "interlock_automation": "Konkurrierende Automation (optional)"
+        },
+        "data_description": {
+          "interlock_automation": "Die Steuerung greift nur ein, wenn die ausgewählte Automation als ausgeschaltet gemeldet wird."
+        }
+      }
+    },
+    "error": {
+      "duplicate_entities": "Bitte wähle unterschiedliche Entitäten.",
+      "invalid_time": "Wähle ein Ladeende nach Mitternacht auf volle Minuten genau.",
+      "no_months": "Wähle mindestens einen Monat.",
+      "invalid_options": "Gib zwei unterschiedliche Optionswerte ein."
+    }
+  },
+  "selector": {
+    "load_source": {
+      "options": {
+        "direct": "Hausverbrauchszähler",
+        "balance": "Energiebilanz"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "target": {
+        "name": "Ziel-Ladestand"
+      },
+      "pv_kwh": {
+        "name": "Konservative PV-Prognose"
+      },
+      "operation": {
+        "name": "Betriebsstatus",
+        "state": {
+          "preview": "Vorschau",
+          "idle": "Bereit",
+          "hold": "Hält Ladestand",
+          "charge": "Lädt aus dem Netz",
+          "blocked": "Steuerung blockiert",
+          "release_pending": "Freigabe ausstehend",
+          "error": "Berechnungsfehler"
+        }
+      }
+    }
+  }
+}

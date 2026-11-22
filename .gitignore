@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+/.pytest_cache/
+/dist/
+/live_fixture.json
+/sg_winter_plan.py
+/sg_winter_plan.before.py
+/preview_tomorrow.py
+/test_winter_plan.py

@@ -1,0 +1,249 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Battery and equipment",
+        "description": "Select the battery readings and installed equipment.",
+        "data": {
+          "battery_soc": "Current state of charge",
+          "min_soc": "Minimum SoC",
+          "max_soc": "Maximum SoC reading",
+          "capacity_kwh": "Battery capacity",
+          "capacity_sensor": "Battery capacity sensor (optional)",
+          "backup_percent": "Backup reserve",
+          "backup_soc": "Backup reserve sensor (optional)",
+          "usable_soc": "SoC is scaled to the usable range",
+          "load_source": "Household load source",
+          "has_heat_pump": "Heat pump installed",
+          "has_wallbox": "EV charger installed"
+        },
+        "data_description": {
+          "capacity_kwh": "Rated capacity in kWh. A selected sensor takes precedence.",
+          "backup_percent": "Used when no reserve sensor is selected.",
+          "usable_soc": "Enable for Sungrow readings scaled between the configured minimum and maximum SoC. Disable for an absolute reading."
+        }
+      },
+      "consumption": {
+        "title": "Energy meters",
+        "description": "Select cumulative energy meters. If configured, EV charging must be included in the measured household load before subtraction.",
+        "data": {
+          "house_energy": "Total household energy",
+          "pv_energy": "Total PV generation",
+          "second_pv_energy": "Additional PV generation (optional)",
+          "grid_import": "Total grid import",
+          "grid_export": "Total grid export",
+          "battery_charge": "Total battery charge",
+          "battery_discharge": "Total battery discharge",
+          "heat_pump_energy": "Total heat pump electricity",
+          "wallbox_energy": "Total EV charger electricity"
+        }
+      },
+      "planning": {
+        "title": "Forecast and charge planning",
+        "description": "Select forecast sources and when grid charging can run.",
+        "data": {
+          "pv_today": "Solcast hourly forecast today",
+          "pv_tomorrow": "Solcast hourly forecast tomorrow (optional)",
+          "weather": "Hourly weather forecast (optional)",
+          "outdoor_temperature": "Outdoor temperature (optional)",
+          "charge_w": "Grid charging power",
+          "low_pv_kwh": "PV threshold for a full charge",
+          "buffer_kwh": "Energy buffer",
+          "fallback_load_kw": "Household load before learning",
+          "end_time": "Charge end (local time)",
+          "winter_months": "Active months (1 = January)"
+        },
+        "data_description": {
+          "pv_today": "The sensor must provide the detailedHourly attribute.",
+          "end_time": "The window starts at midnight. Enter the end time in whole minutes.",
+          "fallback_load_kw": "Estimated average household load for hours without sufficient learning data."
+        }
+      },
+      "operation": {
+        "title": "Operating mode",
+        "description": "Preview mode calculates the plan. Active control requires compatible inverter entities.",
+        "data": {
+          "control_enabled": "Enable active battery control"
+        }
+      },
+      "controls": {
+        "title": "Inverter control",
+        "description": "Select the writable controls and actual inverter feedback entities. Mode labels must match the controls and the reported values.",
+        "data": {
+          "charge_limit": "Maximum charge power control",
+          "forced_power": "Forced charge power control",
+          "max_soc_control": "Maximum SoC control",
+          "ems_control": "EMS mode control",
+          "command_control": "Battery command control",
+          "ems_state": "Actual EMS mode",
+          "command_state": "Actual battery command",
+          "forced_mode": "Forced mode option",
+          "normal_mode": "Self-consumption option",
+          "charge_option": "Forced charge option",
+          "stop_option": "Stop option",
+          "interlock_automation": "Competing automation (optional)"
+        },
+        "data_description": {
+          "interlock_automation": "Active control is blocked unless the selected automation reports that it is off."
+        }
+      }
+    },
+    "error": {
+      "duplicate_entities": "Select different entities.",
+      "invalid_time": "Choose a whole-minute end time after midnight.",
+      "no_months": "Select at least one month.",
+      "invalid_options": "Enter two different option values."
+    },
+    "abort": {
+      "already_configured": "Netzladen Winter is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Battery and equipment",
+        "description": "Select the battery readings and installed equipment.",
+        "data": {
+          "battery_soc": "Current state of charge",
+          "min_soc": "Minimum SoC",
+          "max_soc": "Maximum SoC reading",
+          "capacity_kwh": "Battery capacity",
+          "capacity_sensor": "Battery capacity sensor (optional)",
+          "backup_percent": "Backup reserve",
+          "backup_soc": "Backup reserve sensor (optional)",
+          "usable_soc": "SoC is scaled to the usable range",
+          "load_source": "Household load source",
+          "has_heat_pump": "Heat pump installed",
+          "has_wallbox": "EV charger installed"
+        },
+        "data_description": {
+          "capacity_kwh": "Rated capacity in kWh. A selected sensor takes precedence.",
+          "backup_percent": "Used when no reserve sensor is selected.",
+          "usable_soc": "Enable for Sungrow readings scaled between the configured minimum and maximum SoC. Disable for an absolute reading."
+        }
+      },
+      "user": {
+        "title": "Battery and equipment",
+        "description": "Select the battery readings and installed equipment.",
+        "data": {
+          "battery_soc": "Current state of charge",
+          "min_soc": "Minimum SoC",
+          "max_soc": "Maximum SoC reading",
+          "capacity_kwh": "Battery capacity",
+          "capacity_sensor": "Battery capacity sensor (optional)",
+          "backup_percent": "Backup reserve",
+          "backup_soc": "Backup reserve sensor (optional)",
+          "usable_soc": "SoC is scaled to the usable range",
+          "load_source": "Household load source",
+          "has_heat_pump": "Heat pump installed",
+          "has_wallbox": "EV charger installed"
+        },
+        "data_description": {
+          "capacity_kwh": "Rated capacity in kWh. A selected sensor takes precedence.",
+          "backup_percent": "Used when no reserve sensor is selected.",
+          "usable_soc": "Enable for Sungrow readings scaled between the configured minimum and maximum SoC. Disable for an absolute reading."
+        }
+      },
+      "consumption": {
+        "title": "Energy meters",
+        "description": "Select cumulative energy meters. If configured, EV charging must be included in the measured household load before subtraction.",
+        "data": {
+          "house_energy": "Total household energy",
+          "pv_energy": "Total PV generation",
+          "second_pv_energy": "Additional PV generation (optional)",
+          "grid_import": "Total grid import",
+          "grid_export": "Total grid export",
+          "battery_charge": "Total battery charge",
+          "battery_discharge": "Total battery discharge",
+          "heat_pump_energy": "Total heat pump electricity",
+          "wallbox_energy": "Total EV charger electricity"
+        }
+      },
+      "planning": {
+        "title": "Forecast and charge planning",
+        "description": "Select forecast sources and when grid charging can run.",
+        "data": {
+          "pv_today": "Solcast hourly forecast today",
+          "pv_tomorrow": "Solcast hourly forecast tomorrow (optional)",
+          "weather": "Hourly weather forecast (optional)",
+          "outdoor_temperature": "Outdoor temperature (optional)",
+          "charge_w": "Grid charging power",
+          "low_pv_kwh": "PV threshold for a full charge",
+          "buffer_kwh": "Energy buffer",
+          "fallback_load_kw": "Household load before learning",
+          "end_time": "Charge end (local time)",
+          "winter_months": "Active months (1 = January)"
+        },
+        "data_description": {
+          "pv_today": "The sensor must provide the detailedHourly attribute.",
+          "end_time": "The window starts at midnight. Enter the end time in whole minutes.",
+          "fallback_load_kw": "Estimated average household load for hours without sufficient learning data."
+        }
+      },
+      "operation": {
+        "title": "Operating mode",
+        "description": "Preview mode calculates the plan. Active control requires compatible inverter entities.",
+        "data": {
+          "control_enabled": "Enable active battery control"
+        }
+      },
+      "controls": {
+        "title": "Inverter control",
+        "description": "Select the writable controls and actual inverter feedback entities. Mode labels must match the controls and the reported values.",
+        "data": {
+          "charge_limit": "Maximum charge power control",
+          "forced_power": "Forced charge power control",
+          "max_soc_control": "Maximum SoC control",
+          "ems_control": "EMS mode control",
+          "command_control": "Battery command control",
+          "ems_state": "Actual EMS mode",
+          "command_state": "Actual battery command",
+          "forced_mode": "Forced mode option",
+          "normal_mode": "Self-consumption option",
+          "charge_option": "Forced charge option",
+          "stop_option": "Stop option",
+          "interlock_automation": "Competing automation (optional)"
+        },
+        "data_description": {
+          "interlock_automation": "Active control is blocked unless the selected automation reports that it is off."
+        }
+      }
+    },
+    "error": {
+      "duplicate_entities": "Select different entities.",
+      "invalid_time": "Choose a whole-minute end time after midnight.",
+      "no_months": "Select at least one month.",
+      "invalid_options": "Enter two different option values."
+    }
+  },
+  "selector": {
+    "load_source": {
+      "options": {
+        "direct": "Household energy meter",
+        "balance": "Energy balance"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "target": {
+        "name": "Target state of charge"
+      },
+      "pv_kwh": {
+        "name": "Conservative PV forecast"
+      },
+      "operation": {
+        "name": "Operating status",
+        "state": {
+          "preview": "Preview",
+          "idle": "Ready",
+          "hold": "Holding charge",
+          "charge": "Grid charging",
+          "blocked": "Control blocked",
+          "release_pending": "Release pending",
+          "error": "Planning error"
+        }
+      }
+    }
+  }
+}
