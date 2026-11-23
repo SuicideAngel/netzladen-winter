@@ -10,10 +10,16 @@ from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
 from .const import CONTROL_OPTIONS, CONTROL_READBACK, CONTROL_TARGETS, DOMAIN
-from .planner import finite, in_window
+from .planner import finite, in_window, price_in_cents
 
 LOGGER = logging.getLogger(__name__)
 UNAVAILABLE = (None, "unknown", "unavailable")
+
+
+def price_from_state(state):
+    if state is None:
+        return None
+    return price_in_cents(state.state, state.attributes.get("unit_of_measurement"))
 
 
 class BatteryControl:
@@ -85,10 +91,17 @@ class BatteryControl:
             while any(self.state(entity) != value for entity, value in checks.items()):
                 await asyncio.sleep(0.5)
 
+    def current_price(self):
+        if self.settings["tariff_mode"] != "price":
+            return None
+        entity_id = self.settings.get("price_sensor")
+        state = self.hass.states.get(entity_id) if entity_id else None
+        return price_from_state(state)
+
     def can_control(self):
         automation = self.settings.get("interlock_automation")
         return (not self.stopping and self.settings["control_enabled"]
-                and in_window(self.settings, dt_util.now())
+                and in_window(self.settings, dt_util.now(), self.current_price())
                 and (not automation or self.state(automation) == "off"))
 
     async def async_apply(self, command):

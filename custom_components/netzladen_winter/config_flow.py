@@ -23,10 +23,13 @@ def number(minimum, maximum, unit, step=1):
 
 
 def select(values, *, multiple=False, translation_key=None):
-    return selector.SelectSelector(selector.SelectSelectorConfig(
-        options=list(values), multiple=multiple, translation_key=translation_key,
+    config = selector.SelectSelectorConfig(
+        options=list(values), multiple=multiple,
         mode=selector.SelectSelectorMode.DROPDOWN,
-    ))
+    )
+    if translation_key is not None:
+        config["translation_key"] = translation_key
+    return selector.SelectSelector(config)
 
 
 class SetupForms:
@@ -84,19 +87,13 @@ class SetupForms:
     async def async_step_planning(self, user_input=None):
         errors = {}
         if user_input is not None:
-            try:
-                end = time.fromisoformat(user_input["end_time"])
-                if end.second or end.microsecond or end.tzinfo or end == time(0):
-                    raise ValueError
-            except ValueError:
-                errors["end_time"] = "invalid_time"
             if user_input.get("pv_tomorrow") == user_input["pv_today"]:
                 errors["pv_tomorrow"] = "duplicate_entities"
             if not user_input["winter_months"]:
                 errors["winter_months"] = "no_months"
             if not errors:
                 self.values.update(user_input)
-                return await self.async_step_operation()
+                return await self.async_step_tariff()
         return self.form("planning", {
             "pv_today": entity("sensor"),
             "pv_tomorrow": entity("sensor"),
@@ -106,9 +103,42 @@ class SetupForms:
             "low_pv_kwh": number(0, 100, "kWh", 0.1),
             "buffer_kwh": number(0, 100, "kWh", 0.1),
             "fallback_load_kw": number(0.1, 50, "kW", 0.1),
-            "end_time": selector.TimeSelector(),
             "winter_months": select((str(month) for month in range(1, 13)), multiple=True),
         }, ("pv_tomorrow", "weather", "outdoor_temperature"), user_input, errors)
+
+    async def async_step_tariff(self, user_input=None):
+        if user_input is not None:
+            self.values.update(user_input)
+            if self.values["tariff_mode"] == "price":
+                return await self.async_step_price_tariff()
+            return await self.async_step_fixed_tariff()
+        return self.form("tariff", {
+            "tariff_mode": select(("fixed", "price"), translation_key="tariff_mode"),
+        })
+
+    async def async_step_fixed_tariff(self, user_input=None):
+        errors = {}
+        if user_input is not None:
+            try:
+                end = time.fromisoformat(user_input["end_time"])
+                if end.second or end.microsecond or end.tzinfo or end == time(0):
+                    raise ValueError
+            except (TypeError, ValueError):
+                errors["end_time"] = "invalid_time"
+            else:
+                self.values.update(user_input)
+                return await self.async_step_operation()
+        return self.form("fixed_tariff", {"end_time": selector.TimeSelector()},
+                         user_input=user_input, errors=errors)
+
+    async def async_step_price_tariff(self, user_input=None):
+        if user_input is not None:
+            self.values.update(user_input)
+            return await self.async_step_operation()
+        return self.form("price_tariff", {
+            "price_sensor": entity("sensor"),
+            "price_limit_ct": number(-1000, 1000, "ct/kWh", 0.01),
+        })
 
     async def async_step_operation(self, user_input=None):
         if user_input is not None:

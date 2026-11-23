@@ -40,7 +40,7 @@
       },
       "planning": {
         "title": "Forecast and charge planning",
-        "description": "Select forecast sources and when grid charging can run.",
+        "description": "Select forecast sources and charge planning parameters.",
         "data": {
           "pv_today": "Solcast hourly forecast today",
           "pv_tomorrow": "Solcast hourly forecast tomorrow (optional)",
@@ -50,13 +50,40 @@
           "low_pv_kwh": "PV threshold for a full charge",
           "buffer_kwh": "Energy buffer",
           "fallback_load_kw": "Household load before learning",
-          "end_time": "Charge end (local time)",
           "winter_months": "Active months (1 = January)"
         },
         "data_description": {
           "pv_today": "The sensor must provide the detailedHourly attribute.",
-          "end_time": "The window starts at midnight. Enter the end time in whole minutes.",
           "fallback_load_kw": "Estimated average household load for hours without sufficient learning data."
+        }
+      },
+      "tariff": {
+        "title": "Electricity tariff",
+        "description": "Choose how the integration identifies low-cost electricity.",
+        "data": {
+          "tariff_mode": "Tariff mode"
+        }
+      },
+      "fixed_tariff": {
+        "title": "Fixed time window",
+        "description": "Set the end of your off-peak period.",
+        "data": {
+          "end_time": "Charge end (local time)"
+        },
+        "data_description": {
+          "end_time": "The window starts at midnight. Enter the end time in whole minutes."
+        }
+      },
+      "price_tariff": {
+        "title": "Dynamic price sensor",
+        "description": "Grid charging is allowed when a valid price is at or below the limit.",
+        "data": {
+          "price_sensor": "Current electricity price sensor",
+          "price_limit_ct": "Price limit"
+        },
+        "data_description": {
+          "price_sensor": "Supports ct/kWh, EUR/kWh and EUR/MWh, including the euro symbol.",
+          "price_limit_ct": "Enter the limit in ct/kWh. For example, 20 is equivalent to €0.20/kWh."
         }
       },
       "operation": {
@@ -161,7 +188,7 @@
       },
       "planning": {
         "title": "Forecast and charge planning",
-        "description": "Select forecast sources and when grid charging can run.",
+        "description": "Select forecast sources and charge planning parameters.",
         "data": {
           "pv_today": "Solcast hourly forecast today",
           "pv_tomorrow": "Solcast hourly forecast tomorrow (optional)",
@@ -171,13 +198,40 @@
           "low_pv_kwh": "PV threshold for a full charge",
           "buffer_kwh": "Energy buffer",
           "fallback_load_kw": "Household load before learning",
-          "end_time": "Charge end (local time)",
           "winter_months": "Active months (1 = January)"
         },
         "data_description": {
           "pv_today": "The sensor must provide the detailedHourly attribute.",
-          "end_time": "The window starts at midnight. Enter the end time in whole minutes.",
           "fallback_load_kw": "Estimated average household load for hours without sufficient learning data."
+        }
+      },
+      "tariff": {
+        "title": "Electricity tariff",
+        "description": "Choose how the integration identifies low-cost electricity.",
+        "data": {
+          "tariff_mode": "Tariff mode"
+        }
+      },
+      "fixed_tariff": {
+        "title": "Fixed time window",
+        "description": "Set the end of your off-peak period.",
+        "data": {
+          "end_time": "Charge end (local time)"
+        },
+        "data_description": {
+          "end_time": "The window starts at midnight. Enter the end time in whole minutes."
+        }
+      },
+      "price_tariff": {
+        "title": "Dynamic price sensor",
+        "description": "Grid charging is allowed when a valid price is at or below the limit.",
+        "data": {
+          "price_sensor": "Current electricity price sensor",
+          "price_limit_ct": "Price limit"
+        },
+        "data_description": {
+          "price_sensor": "Supports ct/kWh, EUR/kWh and EUR/MWh, including the euro symbol.",
+          "price_limit_ct": "Enter the limit in ct/kWh. For example, 20 is equivalent to €0.20/kWh."
         }
       },
       "operation": {
@@ -221,6 +275,12 @@
       "options": {
         "direct": "Household energy meter",
         "balance": "Energy balance"
+      }
+    },
+    "tariff_mode": {
+      "options": {
+        "fixed": "Fixed time window",
+        "price": "Dynamic price sensor"
       }
     }
   },

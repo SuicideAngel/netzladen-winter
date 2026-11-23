@@ -40,8 +40,24 @@ def window_end(settings, now):
     return datetime.datetime.combine(now.date(), end, now.tzinfo).timestamp()
 
 
-def in_window(settings, now):
-    return str(now.month) in settings["winter_months"] and now.timestamp() < window_end(settings, now)
+def price_in_cents(value, unit):
+    """Normalize supported euro-denominated electricity prices to ct/kWh."""
+    if not isinstance(unit, str):
+        return None
+    factor = {
+        "ct/kwh": 1, "¢/kwh": 1, "eur/kwh": 100, "€/kwh": 100,
+        "eur/mwh": 0.1, "€/mwh": 0.1,
+    }.get("".join(unit.lower().split()))
+    price = finite(value)
+    return round(price * factor, 9) if factor is not None and price is not None else None
+
+
+def in_window(settings, now, price_ct=None):
+    if str(now.month) not in settings["winter_months"]:
+        return False
+    if settings.get("tariff_mode") == "price":
+        return price_ct is not None and price_ct <= settings["price_limit_ct"]
+    return now.timestamp() < window_end(settings, now)
 
 
 def pv_forecast(entities, settings, now, midnight, day_hours):
@@ -101,7 +117,7 @@ def conservative_pv(raw, low, weather, previous_fog):
     return planned, modes, morning_fog
 
 
-def calculate(now, settings, read, entities, weather_rows, old, owned):
+def calculate(now, settings, read, entities, weather_rows, old, owned, *, price_ct=None):
     """Return a plan, diagnostics and the data needed for the next calculation."""
     low_pv_kwh = settings['low_pv_kwh']
     buffer_kwh = settings['buffer_kwh']
@@ -256,12 +272,14 @@ def calculate(now, settings, read, entities, weather_rows, old, owned):
             soc = max(0, (soc - minimum) * 100 / (100 - minimum))
         capacity *= (100 - minimum) / 100
     full_date = old.get('full_date', '')
-    deadline = window_end(settings, now)
-    night = in_window(settings, now)
+    price_based = settings.get('tariff_mode') == 'price'
+    deadline = ts if price_based else window_end(settings, now)
+    charging_allowed = in_window(settings, now, price_ct)
+    night = charging_allowed and not price_based
 
     if night and forecast_valid and pv_total <= low_pv_kwh:
         full_date = today
-    force_full = full_date == today
+    force_full = not price_based and full_date == today
     target = 100.0
     reason = 'Stündliche PV-Prognose fehlt'
     if forecast_valid:
@@ -299,11 +317,14 @@ def calculate(now, settings, read, entities, weather_rows, old, owned):
 
     # Auch nach einem Neustart ausserhalb des Fensters: zuerst freigeben.
     command = 'release' if owned else 'idle'
-    if night:
+    if charging_allowed:
         if not hardware_valid:
             reason = 'Ladestand, Kapazität oder Reserve ungültig'
         elif not forecast_valid:
             reason = 'Stündliche PV-Prognose fehlt'
+        elif price_based:
+            if soc < target:
+                command = 'charge'
         elif night_free:
             reason = 'Akku deckt Restnacht und Tagesziel'
         elif soc >= target:
@@ -327,7 +348,7 @@ def calculate(now, settings, read, entities, weather_rows, old, owned):
                                   'captured_at': now.isoformat(),
                                   'weather_valid': weather_valid}
     # Letzte Nachtentscheidung samt Stundenwerten fuer spaetere Rueckvergleiche.
-    if night:
+    if charging_allowed:
         if today not in daily_forecasts:
             daily_forecasts[today] = {}
         daily_forecasts[today]['pv_night'] = {
@@ -369,6 +390,10 @@ def calculate(now, settings, read, entities, weather_rows, old, owned):
     if forecast_valid:
         reason = reason + (' · Nebelreserve' if fog_risk else ' · PV-Sicherheitsabschlag')
     result.update({'date': today, 'calculated_at': now.isoformat(), 'command': command,
+                   'tariff_mode': 'price' if price_based else 'fixed',
+                   'charging_allowed': charging_allowed,
+                   'electricity_price_ct': price_ct if price_based else None,
+                   'price_limit_ct': settings['price_limit_ct'] if price_based else None,
                    'target': target if hardware_valid and forecast_valid else None,
                    'reason': reason, 'hardware_valid': hardware_valid,
                    'night_self_consumption': night_free and night,

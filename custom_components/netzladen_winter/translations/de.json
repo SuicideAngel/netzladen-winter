@@ -40,7 +40,7 @@
       },
       "planning": {
         "title": "Prognose und Ladeplanung",
-        "description": "Wähle die Prognosequellen und wann die Netzladung laufen darf.",
+        "description": "Wähle die Prognosequellen und die Parameter für die Ladeplanung.",
         "data": {
           "pv_today": "Solcast-Stundenprognose heute",
           "pv_tomorrow": "Solcast-Stundenprognose morgen (optional)",
@@ -50,13 +50,40 @@
           "low_pv_kwh": "PV-Schwelle für Vollladung",
           "buffer_kwh": "Energiepuffer",
           "fallback_load_kw": "Hauslast bis Messwerte vorliegen",
-          "end_time": "Ladeende (lokale Uhrzeit)",
           "winter_months": "Aktive Monate (1 = Januar)"
         },
         "data_description": {
           "pv_today": "Der Sensor muss das Attribut detailedHourly liefern.",
-          "end_time": "Das Fenster beginnt um Mitternacht. Gib das Ende auf volle Minuten genau an.",
           "fallback_load_kw": "Geschätzte mittlere Hauslast für Stunden ohne ausreichende Lerndaten."
+        }
+      },
+      "tariff": {
+        "title": "Stromtarif",
+        "description": "Wähle, wie die Integration günstigen Strom erkennt.",
+        "data": {
+          "tariff_mode": "Tarifmodus"
+        }
+      },
+      "fixed_tariff": {
+        "title": "Festes Zeitfenster",
+        "description": "Gib an, bis wann der günstige Tarif gilt.",
+        "data": {
+          "end_time": "Ladeende (lokale Uhrzeit)"
+        },
+        "data_description": {
+          "end_time": "Das Fenster beginnt um Mitternacht. Gib das Ende auf volle Minuten genau an."
+        }
+      },
+      "price_tariff": {
+        "title": "Dynamischer Preissensor",
+        "description": "Die Netzladung ist bei einem gültigen Preis bis einschließlich der Grenze freigegeben.",
+        "data": {
+          "price_sensor": "Sensor für den aktuellen Strompreis",
+          "price_limit_ct": "Preisgrenze"
+        },
+        "data_description": {
+          "price_sensor": "Unterstützt ct/kWh, EUR/kWh und EUR/MWh sowie das Eurozeichen.",
+          "price_limit_ct": "Gib die Grenze in ct/kWh ein. Beispiel: 20 entspricht 0,20 €/kWh."
         }
       },
       "operation": {
@@ -161,7 +188,7 @@
       },
       "planning": {
         "title": "Prognose und Ladeplanung",
-        "description": "Wähle die Prognosequellen und wann die Netzladung laufen darf.",
+        "description": "Wähle die Prognosequellen und die Parameter für die Ladeplanung.",
         "data": {
           "pv_today": "Solcast-Stundenprognose heute",
           "pv_tomorrow": "Solcast-Stundenprognose morgen (optional)",
@@ -171,13 +198,40 @@
           "low_pv_kwh": "PV-Schwelle für Vollladung",
           "buffer_kwh": "Energiepuffer",
           "fallback_load_kw": "Hauslast bis Messwerte vorliegen",
-          "end_time": "Ladeende (lokale Uhrzeit)",
           "winter_months": "Aktive Monate (1 = Januar)"
         },
         "data_description": {
           "pv_today": "Der Sensor muss das Attribut detailedHourly liefern.",
-          "end_time": "Das Fenster beginnt um Mitternacht. Gib das Ende auf volle Minuten genau an.",
           "fallback_load_kw": "Geschätzte mittlere Hauslast für Stunden ohne ausreichende Lerndaten."
+        }
+      },
+      "tariff": {
+        "title": "Stromtarif",
+        "description": "Wähle, wie die Integration günstigen Strom erkennt.",
+        "data": {
+          "tariff_mode": "Tarifmodus"
+        }
+      },
+      "fixed_tariff": {
+        "title": "Festes Zeitfenster",
+        "description": "Gib an, bis wann der günstige Tarif gilt.",
+        "data": {
+          "end_time": "Ladeende (lokale Uhrzeit)"
+        },
+        "data_description": {
+          "end_time": "Das Fenster beginnt um Mitternacht. Gib das Ende auf volle Minuten genau an."
+        }
+      },
+      "price_tariff": {
+        "title": "Dynamischer Preissensor",
+        "description": "Die Netzladung ist bei einem gültigen Preis bis einschließlich der Grenze freigegeben.",
+        "data": {
+          "price_sensor": "Sensor für den aktuellen Strompreis",
+          "price_limit_ct": "Preisgrenze"
+        },
+        "data_description": {
+          "price_sensor": "Unterstützt ct/kWh, EUR/kWh und EUR/MWh sowie das Eurozeichen.",
+          "price_limit_ct": "Gib die Grenze in ct/kWh ein. Beispiel: 20 entspricht 0,20 €/kWh."
         }
       },
       "operation": {
@@ -221,6 +275,12 @@
       "options": {
         "direct": "Hausverbrauchszähler",
         "balance": "Energiebilanz"
+      }
+    },
+    "tariff_mode": {
+      "options": {
+        "fixed": "Festes Zeitfenster",
+        "price": "Dynamischer Preissensor"
       }
     }
   },

@@ -9,6 +9,7 @@ from .const import DOMAIN, NAME, OPERATING_STATES
 
 PLAN_ATTRIBUTES = (
     "date", "calculated_at", "reason", "command", "night_self_consumption",
+    "tariff_mode", "charging_allowed", "electricity_price_ct", "price_limit_ct",
     "night_required_kwh", "night_load_kwh", "weather_valid", "wp_model_source",
     "wp_slope", "wp_profile", "weather_adjustment_kwh", "pv_kwh",
     "forecast_valid", "forecast_source", "max_charge_w", "load_profile",

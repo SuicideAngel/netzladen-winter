@@ -9,7 +9,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import dt as dt_util
 
 from .const import DEFAULTS, DOMAIN, LEARNING_KEYS, NAME
-from .controls import BatteryControl
+from .controls import BatteryControl, price_from_state
 from .planner import calculate, finite
 
 LOGGER = logging.getLogger(__name__)
@@ -89,6 +89,10 @@ class WinterCoordinator(DataUpdateCoordinator):
             return self.weather_rows
         return []
 
+    async def async_price_changed(self, event):
+        if price_from_state(event.data["old_state"]) != price_from_state(event.data["new_state"]):
+            await self.async_cycle()
+
     async def async_cycle(self, _event_time=None):
         async with self.lock:
             if self.stopping:
@@ -108,7 +112,10 @@ class WinterCoordinator(DataUpdateCoordinator):
                 for key in ("pv_today", "pv_tomorrow"):
                     if entity_id := self.settings.get(key):
                         entities[entity_id] = self.hass.states.get(entity_id)
-                plan = calculate(now, self.settings, self.read, entities, weather, self.previous, owned)
+                plan = calculate(
+                    now, self.settings, self.read, entities, weather, self.previous, owned,
+                    price_ct=self.control.current_price(),
+                )
                 if status is None:
                     status = await self.control.async_apply(plan["command"])
                 elif not self.settings["control_enabled"]:

@@ -37,12 +37,48 @@ class PlannerTest(unittest.TestCase):
             for hour in range(24)
         ]
 
-    def plan(self, previous=None, owned=False):
+    def plan(self, previous=None, owned=False, price_ct=None):
         return planner.calculate(
             self.now, self.settings, lambda key, kind: self.readings.get(key),
             {"sensor.pv": SimpleNamespace(state="16", attributes={"detailedHourly": self.rows})},
-            self.weather, previous or {}, owned,
+            self.weather, previous or {}, owned, price_ct=price_ct,
         )
+
+    def test_dynamic_tariff_charges_at_limit_and_releases_above_it(self):
+        self.now += timedelta(hours=13)
+        self.settings.update(tariff_mode="price", price_limit_ct=20, buffer_kwh=8)
+        price = planner.price_in_cents("0.20", "EUR/kWh")
+        plan = self.plan(price_ct=price)
+        self.assertEqual(plan["command"], "charge")
+        self.assertTrue(plan["charging_allowed"])
+        self.assertEqual(plan["electricity_price_ct"], 20)
+
+        released = self.plan(previous=plan, owned=True, price_ct=20.01)
+        self.assertEqual(released["command"], "release")
+        self.assertFalse(released["charging_allowed"])
+        self.assertEqual(self.plan(owned=True)["command"], "release")
+        self.assertEqual(self.plan()["command"], "idle")
+
+    def test_dynamic_tariff_checks_active_months_and_target(self):
+        self.settings.update(tariff_mode="price", price_limit_ct=20)
+        self.readings["battery_soc"] = 100
+        self.assertEqual(self.plan(owned=True, price_ct=15)["command"], "release")
+        self.settings["winter_months"] = ["12"]
+        self.assertFalse(self.plan(price_ct=-5)["charging_allowed"])
+
+    def test_price_units_and_legacy_fixed_window(self):
+        self.assertEqual(planner.price_in_cents("20", "ct/kWh"), 20)
+        self.assertEqual(planner.price_in_cents("0.07", "€ / kWh"), 7)
+        self.assertEqual(planner.price_in_cents("-50", "EUR/MWh"), -5)
+        for state, unit in (("unknown", "EUR/kWh"), ("NaN", "ct/kWh"),
+                            ("1", "USD/kWh"), ("1", None)):
+            with self.subTest(state=state, unit=unit):
+                self.assertIsNone(planner.price_in_cents(state, unit))
+
+        self.settings.pop("tariff_mode")
+        self.assertTrue(self.plan(price_ct=100)["charging_allowed"])
+        self.now += timedelta(hours=5)
+        self.assertFalse(self.plan(price_ct=-100)["charging_allowed"])
 
     def test_learning_without_wallbox_uses_direct_meter(self):
         first = self.plan()
