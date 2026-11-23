@@ -52,11 +52,12 @@ def price_in_cents(value, unit):
     return round(price * factor, 9) if factor is not None and price is not None else None
 
 
-def in_window(settings, now, price_ct=None):
+def in_window(settings, now, price_ct=None, *, charging=False):
     if str(now.month) not in settings["winter_months"]:
         return False
     if settings.get("tariff_mode") == "price":
-        return price_ct is not None and price_ct <= settings["price_limit_ct"]
+        limit = settings["price_limit_ct"]
+        return price_ct is not None and (price_ct < limit or (charging and price_ct == limit))
     return now.timestamp() < window_end(settings, now)
 
 
@@ -117,7 +118,7 @@ def conservative_pv(raw, low, weather, previous_fog):
     return planned, modes, morning_fog
 
 
-def calculate(now, settings, read, entities, weather_rows, old, owned, *, price_ct=None):
+def calculate(now, settings, read, entities, weather_rows, old, owned, *, price_ct=None, charging=False):
     """Return a plan, diagnostics and the data needed for the next calculation."""
     low_pv_kwh = settings['low_pv_kwh']
     buffer_kwh = settings['buffer_kwh']
@@ -274,7 +275,7 @@ def calculate(now, settings, read, entities, weather_rows, old, owned, *, price_
     full_date = old.get('full_date', '')
     price_based = settings.get('tariff_mode') == 'price'
     deadline = ts if price_based else window_end(settings, now)
-    charging_allowed = in_window(settings, now, price_ct)
+    charging_allowed = in_window(settings, now, price_ct, charging=charging)
     night = charging_allowed and not price_based
 
     if night and forecast_valid and pv_total <= low_pv_kwh:

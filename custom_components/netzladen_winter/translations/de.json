@@ -76,7 +76,7 @@
       },
       "price_tariff": {
         "title": "Dynamischer Preissensor",
-        "description": "Die Netzladung ist bei einem gültigen Preis bis einschließlich der Grenze freigegeben.",
+        "description": "Die Netzladung kann unter der Preisgrenze starten und endet oberhalb der Grenze. Genau an der Grenze bleibt eine laufende Ladung freigegeben.",
         "data": {
           "price_sensor": "Sensor für den aktuellen Strompreis",
           "price_limit_ct": "Preisgrenze"
@@ -224,7 +224,7 @@
       },
       "price_tariff": {
         "title": "Dynamischer Preissensor",
-        "description": "Die Netzladung ist bei einem gültigen Preis bis einschließlich der Grenze freigegeben.",
+        "description": "Die Netzladung kann unter der Preisgrenze starten und endet oberhalb der Grenze. Genau an der Grenze bleibt eine laufende Ladung freigegeben.",
         "data": {
           "price_sensor": "Sensor für den aktuellen Strompreis",
           "price_limit_ct": "Preisgrenze"

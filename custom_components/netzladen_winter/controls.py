@@ -98,10 +98,15 @@ class BatteryControl:
         state = self.hass.states.get(entity_id) if entity_id else None
         return price_from_state(state)
 
+    def is_charging(self):
+        return (self.settings["tariff_mode"] == "price" and self.recovery is not None and not self.releasing
+                and self.state(self.settings["command_state"]) == self.settings["charge_option"])
+
     def can_control(self):
         automation = self.settings.get("interlock_automation")
         return (not self.stopping and self.settings["control_enabled"]
-                and in_window(self.settings, dt_util.now(), self.current_price())
+                and in_window(self.settings, dt_util.now(), self.current_price(),
+                              charging=self.is_charging())
                 and (not automation or self.state(automation) == "off"))
 
     async def async_apply(self, command):

@@ -76,7 +76,7 @@
       },
       "price_tariff": {
         "title": "Dynamic price sensor",
-        "description": "Grid charging is allowed when a valid price is at or below the limit.",
+        "description": "Grid charging can start below the price limit and stops above it. At the exact limit, an ongoing charge remains allowed.",
         "data": {
           "price_sensor": "Current electricity price sensor",
           "price_limit_ct": "Price limit"
@@ -224,7 +224,7 @@
       },
       "price_tariff": {
         "title": "Dynamic price sensor",
-        "description": "Grid charging is allowed when a valid price is at or below the limit.",
+        "description": "Grid charging can start below the price limit and stops above it. At the exact limit, an ongoing charge remains allowed.",
         "data": {
           "price_sensor": "Current electricity price sensor",
           "price_limit_ct": "Price limit"

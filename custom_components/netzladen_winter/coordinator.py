@@ -112,9 +112,11 @@ class WinterCoordinator(DataUpdateCoordinator):
                 for key in ("pv_today", "pv_tomorrow"):
                     if entity_id := self.settings.get(key):
                         entities[entity_id] = self.hass.states.get(entity_id)
+                charging = (self.control.is_charging() if self.settings["control_enabled"]
+                            else self.previous.get("command") == "charge")
                 plan = calculate(
                     now, self.settings, self.read, entities, weather, self.previous, owned,
-                    price_ct=self.control.current_price(),
+                    price_ct=self.control.current_price(), charging=charging,
                 )
                 if status is None:
                     status = await self.control.async_apply(plan["command"])

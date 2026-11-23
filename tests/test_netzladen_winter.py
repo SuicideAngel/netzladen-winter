@@ -37,26 +37,35 @@ class PlannerTest(unittest.TestCase):
             for hour in range(24)
         ]
 
-    def plan(self, previous=None, owned=False, price_ct=None):
+    def plan(self, previous=None, owned=False, price_ct=None, charging=False):
         return planner.calculate(
             self.now, self.settings, lambda key, kind: self.readings.get(key),
             {"sensor.pv": SimpleNamespace(state="16", attributes={"detailedHourly": self.rows})},
-            self.weather, previous or {}, owned, price_ct=price_ct,
+            self.weather, previous or {}, owned, price_ct=price_ct, charging=charging,
         )
 
-    def test_dynamic_tariff_charges_at_limit_and_releases_above_it(self):
+    def test_dynamic_tariff_starts_below_limit_and_stops_above_it(self):
         self.now += timedelta(hours=13)
         self.settings.update(tariff_mode="price", price_limit_ct=20, buffer_kwh=8)
-        price = planner.price_in_cents("0.20", "EUR/kWh")
-        plan = self.plan(price_ct=price)
-        self.assertEqual(plan["command"], "charge")
-        self.assertTrue(plan["charging_allowed"])
-        self.assertEqual(plan["electricity_price_ct"], 20)
+        limit_price = planner.price_in_cents("0.20", "EUR/kWh")
+        idle = self.plan(price_ct=limit_price)
+        self.assertEqual(idle["command"], "idle")
+        self.assertFalse(idle["charging_allowed"])
+        self.assertEqual(idle["electricity_price_ct"], 20)
 
-        released = self.plan(previous=plan, owned=True, price_ct=20.01)
+        start = self.plan(previous=idle, price_ct=19.99)
+        self.assertEqual(start["command"], "charge")
+        self.assertTrue(start["charging_allowed"])
+
+        continued = self.plan(previous=start, owned=True, price_ct=limit_price, charging=True)
+        self.assertEqual(continued["command"], "charge")
+        self.assertTrue(continued["charging_allowed"])
+
+        released = self.plan(previous=continued, owned=True, price_ct=20.01, charging=True)
         self.assertEqual(released["command"], "release")
         self.assertFalse(released["charging_allowed"])
-        self.assertEqual(self.plan(owned=True)["command"], "release")
+        self.assertEqual(self.plan(previous=released, price_ct=limit_price)["command"], "idle")
+        self.assertEqual(self.plan(owned=True, charging=True)["command"], "release")
         self.assertEqual(self.plan()["command"], "idle")
 
     def test_dynamic_tariff_checks_active_months_and_target(self):
