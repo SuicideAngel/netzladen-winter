@@ -151,6 +151,15 @@ class PlannerTest(unittest.TestCase):
         self.now += timedelta(hours=3)
         self.assertEqual(self.plan(owned=True)["command"], "release")
 
+    def test_storage_and_grid_charge_limits_are_independent(self):
+        self.settings["charge_w"] = 3500
+        self.assertEqual(self.plan()["max_charge_w"], 3500)
+        self.settings["storage_charge_w"] = 5000
+        self.assertEqual(self.plan()["max_charge_w"], 3500)
+        self.assertEqual(self.plan()["storage_charge_w"], 5000)
+        self.settings["charge_w"] = 10000
+        self.assertEqual(self.plan()["max_charge_w"], 5000)
+
     def test_repeated_hour_still_accepts_complete_forecast(self):
         try:
             tz = ZoneInfo("Europe/Berlin")

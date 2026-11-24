@@ -46,7 +46,6 @@
           "pv_tomorrow": "Solcast hourly forecast tomorrow (optional)",
           "weather": "Hourly weather forecast (optional)",
           "outdoor_temperature": "Outdoor temperature (optional)",
-          "charge_w": "Grid charging power",
           "low_pv_kwh": "PV threshold for a full charge",
           "buffer_kwh": "Energy buffer",
           "fallback_load_kw": "Household load before learning",
@@ -55,6 +54,18 @@
         "data_description": {
           "pv_today": "The sensor must provide the detailedHourly attribute.",
           "fallback_load_kw": "Estimated average household load for hours without sufficient learning data."
+        }
+      },
+      "charge_power": {
+        "title": "Charging power",
+        "description": "Set the battery charging limit and the grid charging limit separately.",
+        "data": {
+          "storage_charge_w": "Maximum battery charging power (optional)",
+          "charge_w": "Maximum grid charging power"
+        },
+        "data_description": {
+          "storage_charge_w": "General battery charging limit. When releasing the inverter, the integration will restore no more than this value.",
+          "charge_w": "Grid charging is capped at the lower of the configured limits."
         }
       },
       "tariff": {
@@ -194,7 +205,6 @@
           "pv_tomorrow": "Solcast hourly forecast tomorrow (optional)",
           "weather": "Hourly weather forecast (optional)",
           "outdoor_temperature": "Outdoor temperature (optional)",
-          "charge_w": "Grid charging power",
           "low_pv_kwh": "PV threshold for a full charge",
           "buffer_kwh": "Energy buffer",
           "fallback_load_kw": "Household load before learning",
@@ -203,6 +213,18 @@
         "data_description": {
           "pv_today": "The sensor must provide the detailedHourly attribute.",
           "fallback_load_kw": "Estimated average household load for hours without sufficient learning data."
+        }
+      },
+      "charge_power": {
+        "title": "Charging power",
+        "description": "Set the battery charging limit and the grid charging limit separately.",
+        "data": {
+          "storage_charge_w": "Maximum battery charging power (optional)",
+          "charge_w": "Maximum grid charging power"
+        },
+        "data_description": {
+          "storage_charge_w": "General battery charging limit. When releasing the inverter, the integration will restore no more than this value.",
+          "charge_w": "Grid charging is capped at the lower of the configured limits."
         }
       },
       "tariff": {

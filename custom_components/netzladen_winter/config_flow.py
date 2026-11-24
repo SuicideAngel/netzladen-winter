@@ -93,18 +93,26 @@ class SetupForms:
                 errors["winter_months"] = "no_months"
             if not errors:
                 self.values.update(user_input)
-                return await self.async_step_tariff()
+                return await self.async_step_charge_power()
         return self.form("planning", {
             "pv_today": entity("sensor"),
             "pv_tomorrow": entity("sensor"),
             "weather": entity("weather"),
             "outdoor_temperature": entity("sensor"),
-            "charge_w": number(1, 50000, "W"),
             "low_pv_kwh": number(0, 100, "kWh", 0.1),
             "buffer_kwh": number(0, 100, "kWh", 0.1),
             "fallback_load_kw": number(0.1, 50, "kW", 0.1),
             "winter_months": select((str(month) for month in range(1, 13)), multiple=True),
         }, ("pv_tomorrow", "weather", "outdoor_temperature"), user_input, errors)
+
+    async def async_step_charge_power(self, user_input=None):
+        if user_input is not None:
+            self.values.update(user_input)
+            return await self.async_step_tariff()
+        return self.form("charge_power", {
+            "storage_charge_w": number(1, 50000, "W"),
+            "charge_w": number(1, 50000, "W"),
+        }, ("storage_charge_w",))
 
     async def async_step_tariff(self, user_input=None):
         if user_input is not None:

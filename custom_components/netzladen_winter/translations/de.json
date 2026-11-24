@@ -46,7 +46,6 @@
           "pv_tomorrow": "Solcast-Stundenprognose morgen (optional)",
           "weather": "Stündliche Wetterprognose (optional)",
           "outdoor_temperature": "Außentemperatur (optional)",
-          "charge_w": "Netzladeleistung",
           "low_pv_kwh": "PV-Schwelle für Vollladung",
           "buffer_kwh": "Energiepuffer",
           "fallback_load_kw": "Hauslast bis Messwerte vorliegen",
@@ -55,6 +54,18 @@
         "data_description": {
           "pv_today": "Der Sensor muss das Attribut detailedHourly liefern.",
           "fallback_load_kw": "Geschätzte mittlere Hauslast für Stunden ohne ausreichende Lerndaten."
+        }
+      },
+      "charge_power": {
+        "title": "Ladeleistung",
+        "description": "Lege die Leistungsgrenze des Speichers und die gewünschte Obergrenze für Netzladung getrennt fest.",
+        "data": {
+          "storage_charge_w": "Maximale Ladeleistung des Speichers (optional)",
+          "charge_w": "Maximale Netzladeleistung"
+        },
+        "data_description": {
+          "storage_charge_w": "Allgemeine Ladegrenze des Speichers. Bei der Freigabe stellt die Integration höchstens diesen Wert wieder her.",
+          "charge_w": "Netzladung verwendet höchstens den kleineren der beiden eingestellten Werte."
         }
       },
       "tariff": {
@@ -194,7 +205,6 @@
           "pv_tomorrow": "Solcast-Stundenprognose morgen (optional)",
           "weather": "Stündliche Wetterprognose (optional)",
           "outdoor_temperature": "Außentemperatur (optional)",
-          "charge_w": "Netzladeleistung",
           "low_pv_kwh": "PV-Schwelle für Vollladung",
           "buffer_kwh": "Energiepuffer",
           "fallback_load_kw": "Hauslast bis Messwerte vorliegen",
@@ -203,6 +213,18 @@
         "data_description": {
           "pv_today": "Der Sensor muss das Attribut detailedHourly liefern.",
           "fallback_load_kw": "Geschätzte mittlere Hauslast für Stunden ohne ausreichende Lerndaten."
+        }
+      },
+      "charge_power": {
+        "title": "Ladeleistung",
+        "description": "Lege die Leistungsgrenze des Speichers und die gewünschte Obergrenze für Netzladung getrennt fest.",
+        "data": {
+          "storage_charge_w": "Maximale Ladeleistung des Speichers (optional)",
+          "charge_w": "Maximale Netzladeleistung"
+        },
+        "data_description": {
+          "storage_charge_w": "Allgemeine Ladegrenze des Speichers. Bei der Freigabe stellt die Integration höchstens diesen Wert wieder her.",
+          "charge_w": "Netzladung verwendet höchstens den kleineren der beiden eingestellten Werte."
         }
       },
       "tariff": {

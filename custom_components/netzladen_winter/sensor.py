@@ -12,7 +12,7 @@ PLAN_ATTRIBUTES = (
     "tariff_mode", "charging_allowed", "electricity_price_ct", "price_limit_ct",
     "night_required_kwh", "night_load_kwh", "weather_valid", "wp_model_source",
     "wp_slope", "wp_profile", "weather_adjustment_kwh", "pv_kwh",
-    "forecast_valid", "forecast_source", "max_charge_w", "load_profile",
+    "forecast_valid", "forecast_source", "max_charge_w", "storage_charge_w", "load_profile",
     "profile_counts", "forecast_today", "actual_today", "actual_today_hours",
     "forecast_yesterday", "actual_yesterday", "deviation_yesterday",
 )

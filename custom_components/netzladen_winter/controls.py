@@ -10,7 +10,7 @@ from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
 from .const import CONTROL_OPTIONS, CONTROL_READBACK, CONTROL_TARGETS, DOMAIN
-from .planner import finite, in_window, price_in_cents
+from .planner import finite, grid_charge_power, in_window, price_in_cents
 
 LOGGER = logging.getLogger(__name__)
 UNAVAILABLE = (None, "unknown", "unavailable")
@@ -121,8 +121,9 @@ class BatteryControl:
 
         cfg = self.settings
         try:
-            limit = self.number_value(cfg["charge_limit"], cfg["charge_w"], "W")
-            power = self.number_value(cfg["forced_power"], cfg["charge_w"], "W")
+            charge_w = grid_charge_power(cfg)
+            limit = self.number_value(cfg["charge_limit"], charge_w, "W")
+            power = self.number_value(cfg["forced_power"], charge_w, "W")
             self.number_value(cfg["max_soc_control"], 100, "%")
             self.prepare_number(cfg["charge_limit"], limit)
             self.prepare_number(cfg["forced_power"], power)
@@ -140,8 +141,13 @@ class BatteryControl:
                 old_max = finite(self.state(cfg["max_soc_control"]))
                 if old_limit is None or old_max is None:
                     return "blocked"
+                release_limit = old_limit
+                if (storage_charge_w := cfg.get("storage_charge_w")) is not None:
+                    storage_limit = self.number_value(cfg["charge_limit"], storage_charge_w, "W")
+                    release_limit = min(old_limit, storage_limit)
+                    self.prepare_number(cfg["charge_limit"], release_limit)
                 recovery = {key: cfg[key] for key in (*CONTROL_TARGETS, *CONTROL_READBACK, *CONTROL_OPTIONS)}
-                recovery.update(old_limit=old_limit, old_max=old_max)
+                recovery.update(old_limit=old_limit, old_max=old_max, release_limit=release_limit)
                 await self.store.async_save(recovery)
                 if await self.store.async_load() != recovery:
                     raise HomeAssistantError("Vorherige Wechselrichtereinstellungen konnten nicht gesichert werden")
@@ -187,7 +193,7 @@ class BatteryControl:
             await self.async_confirm({
                 cfg["ems_state"]: cfg["normal_mode"], cfg["command_state"]: cfg["stop_option"],
             })
-            await self.async_write(cfg["charge_limit"], cfg["old_limit"])
+            await self.async_write(cfg["charge_limit"], cfg.get("release_limit", cfg["old_limit"]))
             await self.async_write(cfg["max_soc_control"], cfg["old_max"])
             await self.store.async_remove()
         except (HomeAssistantError, TimeoutError, OSError) as err:

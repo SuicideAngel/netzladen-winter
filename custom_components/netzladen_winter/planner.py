@@ -61,6 +61,13 @@ def in_window(settings, now, price_ct=None, *, charging=False):
     return now.timestamp() < window_end(settings, now)
 
 
+def grid_charge_power(settings):
+    """Limit grid charging to the configured battery charging power."""
+    grid_w = settings["charge_w"]
+    storage_w = settings.get("storage_charge_w")
+    return min(grid_w, storage_w) if storage_w is not None else grid_w
+
+
 def pv_forecast(entities, settings, now, midnight, day_hours):
     for key in ("pv_today", "pv_tomorrow"):
         entity = entities.get(settings.get(key))
@@ -122,7 +129,9 @@ def calculate(now, settings, read, entities, weather_rows, old, owned, *, price_
     """Return a plan, diagnostics and the data needed for the next calculation."""
     low_pv_kwh = settings['low_pv_kwh']
     buffer_kwh = settings['buffer_kwh']
-    charge_w = settings['charge_w']
+    charge_w = grid_charge_power(settings)
+    storage_charge_w = settings.get('storage_charge_w')
+    pv_charge_kw = storage_charge_w / 1000 if storage_charge_w is not None else PV_STORAGE_KW
     ts = now.timestamp()
     today = now.date().isoformat()
     midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -298,7 +307,7 @@ def calculate(now, settings, read, entities, weather_rows, old, owned, *, price_
                 if net >= 0:
                     needed = min(capacity, needed + min(PV_STORAGE_KW * fraction, net) / ETA)
                 else:
-                    needed = max(floor, needed - min(PV_STORAGE_KW * fraction, -net) * ETA)
+                    needed = max(floor, needed - min(pv_charge_kw * fraction, -net) * ETA)
             target = min(100.0, max(backup, (needed + buffer_kwh) / capacity * 100))
             reason = 'Stundenprofil, PV-Prognose und Energiepuffer'
     target = round(target, 1)
@@ -406,6 +415,7 @@ def calculate(now, settings, read, entities, weather_rows, old, owned, *, price_
                    'base_load_profile': base_profile, 'pv_kwh': pv_total,
                    'forecast_valid': forecast_valid, 'forecast_source': forecast_source,
                    'low_pv_kwh': low_pv_kwh, 'max_charge_w': charge_w,
+                   'storage_charge_w': storage_charge_w,
                    'load_profile': profile, 'profile_counts': counts,
                    'full_date': full_date, 'snapshot': snapshot, 'hours': history,
                    'profile_source': '14 Tage mit einstellbarem Startwert'})

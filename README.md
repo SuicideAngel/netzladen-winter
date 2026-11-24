@@ -21,7 +21,8 @@ Für eine manuelle Installation den Ordner `custom_components/netzladen_winter` 
 | Wärmepumpe | Bei aktivierter Option den fortlaufenden Stromzähler der Wärmepumpe auswählen. Ihr Verbrauch bleibt Teil des Hausverbrauchs. Gelernte Messpaare aus Verbrauch und Außentemperatur erlauben eine Wetterkorrektur. |
 | Wallbox | Bei aktivierter Option den fortlaufenden Ladeenergiezähler auswählen. Die Integration zieht den Wallboxverbrauch vom gemessenen Hausverbrauch ab. Die gewählte Hausmessung oder Bilanz muss ihn daher enthalten. |
 | Planung | Solcast-PV-Sensor für heute und optional morgen, Wetterentität mit Stundenprognose und optionaler Außentemperatursensor. Bei Solcast die Attribute `detailedHourly` für die gewählten Sensoren bereitstellen. Beide Prognosen werden nach dem Datum ihrer Stundenwerte geprüft. |
-| Parameter | Ladeleistung in W, PV-Schwelle für Vollladung, Puffer in kWh, stündlicher Startwert in kW und aktive Monate. |
+| Ladeleistung | Maximale Ladeleistung des Speichers (optional) und maximale Netzladeleistung, jeweils in W. |
+| Parameter | PV-Schwelle für Vollladung, Puffer in kWh, stündlicher Startwert in kW und aktive Monate. |
 | Stromtarif | Festes Zeitfenster mit einstellbarem Ladeende oder dynamische Freigabe über einen Preissensor mit Preisgrenze in ct/kWh. |
 
 Energiezähler sollen fortlaufende Gesamtwerte in Wh, kWh oder MWh liefern. Bei der Bilanz sind Netzbezug, Einspeisung, Batterieladung und -entladung jeweils positive Zähler. Das Lernprofil verwendet bis zu 14 abgeschlossene Tage. Eine Stunde nutzt den einstellbaren Startwert, bis mindestens drei passende Messungen vorliegen. Bei neuen Sensorzuordnungen für das Lernprofil beginnt die Messung mit den neuen Quellen. Die Integration übernimmt keine alten Messreihen aus dem YAML-Paket.
@@ -38,6 +39,8 @@ Unter **Konfigurieren → Stromtarif** stehen zwei Modi zur Auswahl. Beide gelte
 Im Preismodus prüft die Integration jede Preisänderung und zusätzlich einmal pro Minute. Sie nutzt den aktuellen Preis für die Freigabe und berechnet das Ladeziel aus der verbleibenden Haushaltslast und PV-Prognose des Tages. Bei einem Preis über der Grenze, einem fehlenden Preis oder einer unbekannten Einheit endet die Freigabe. Der Zielsensor zeigt den umgerechneten Preis, die Preisgrenze und den Freigabestatus in seinen Attributen.
 
 ## Speichersteuerung
+
+Unter **Konfigurieren → Ladeleistung** legst du die allgemeine Ladegrenze des Speichers und die maximale Netzladeleistung getrennt fest. Beim Netzladen gelten beide Grenzen. Bei 5.000 W am Speicher und 3.500 W fürs Netzladen plant und steuert die Integration mit höchstens 3.500 W. Bei der Freigabe stellt sie den vorherigen Ladereglerwert höchstens bis zur Speichergrenze wieder her. Die Speichergrenze bestimmt auch, wie viel PV-Überschuss der Ladeplan pro Stunde im Akku anrechnet. Ohne eingetragene Speichergrenze gilt das bisherige Verhalten.
 
 Die Vorschau ist voreingestellt. Für aktive Steuerung stehen drei schreibbare Zahlen-Entitäten für Ladebegrenzung, Zwangsladeleistung und maximalen SoC sowie zwei Auswahl-Entitäten für EMS-Modus und Ladebefehl zur Verfügung. Zwei zusätzliche Entitäten melden die tatsächlichen Betriebszustände des Wechselrichters zurück. Die voreingestellten Texte entsprechen dem vorhandenen Sungrow-Paket. Zahlen-Entitäten für die Leistung können in W oder kW arbeiten. Einheitenlose Leistungs-Helper werden als W behandelt.
 
