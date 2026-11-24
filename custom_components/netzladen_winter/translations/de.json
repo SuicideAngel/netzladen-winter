@@ -42,8 +42,8 @@
         "title": "Prognose und Ladeplanung",
         "description": "Wähle die Prognosequellen und die Parameter für die Ladeplanung.",
         "data": {
-          "pv_today": "Solcast-Stundenprognose heute",
-          "pv_tomorrow": "Solcast-Stundenprognose morgen (optional)",
+          "pv_today": "PV-Stundenprognose heute",
+          "pv_tomorrow": "PV-Stundenprognose morgen (optional)",
           "weather": "Stündliche Wetterprognose (optional)",
           "outdoor_temperature": "Außentemperatur (optional)",
           "low_pv_kwh": "PV-Schwelle für Vollladung",
@@ -52,7 +52,7 @@
           "winter_months": "Aktive Monate (1 = Januar)"
         },
         "data_description": {
-          "pv_today": "Der Sensor muss das Attribut detailedHourly liefern.",
+          "pv_today": "Solcast oder ein kompatibler Sensor mit vollständigen Stundenwerten im Attribut detailedHourly.",
           "fallback_load_kw": "Geschätzte mittlere Hauslast für Stunden ohne ausreichende Lerndaten."
         }
       },
@@ -89,12 +89,14 @@
         "title": "Dynamischer Preissensor",
         "description": "Die Netzladung kann unter der Preisgrenze starten und endet oberhalb der Grenze. Genau an der Grenze bleibt eine laufende Ladung freigegeben.",
         "data": {
-          "price_sensor": "Sensor für den aktuellen Strompreis",
-          "price_limit_ct": "Preisgrenze"
+          "price_sensor": "Sensor für den aktuellen Arbeitspreis",
+          "price_limit_ct": "Preisgrenze",
+          "price_max_age_min": "Maximale Zeit ohne Preismeldung"
         },
         "data_description": {
-          "price_sensor": "Unterstützt ct/kWh, EUR/kWh und EUR/MWh sowie das Eurozeichen.",
-          "price_limit_ct": "Gib die Grenze in ct/kWh ein. Beispiel: 20 entspricht 0,20 €/kWh."
+          "price_sensor": "Wähle den Sensor für den aktuell geltenden Preis pro Kilowattstunde. Unterstützt ct/kWh, EUR/kWh und EUR/MWh sowie das Eurozeichen.",
+          "price_limit_ct": "Gib die Grenze in ct/kWh ein. Beispiel: 20 entspricht 0,20 €/kWh.",
+          "price_max_age_min": "Zeit seit der letzten Sensormeldung an Home Assistant. Auch eine neue Meldung mit unverändertem Preis setzt die Frist zurück."
         }
       },
       "operation": {
@@ -201,8 +203,8 @@
         "title": "Prognose und Ladeplanung",
         "description": "Wähle die Prognosequellen und die Parameter für die Ladeplanung.",
         "data": {
-          "pv_today": "Solcast-Stundenprognose heute",
-          "pv_tomorrow": "Solcast-Stundenprognose morgen (optional)",
+          "pv_today": "PV-Stundenprognose heute",
+          "pv_tomorrow": "PV-Stundenprognose morgen (optional)",
           "weather": "Stündliche Wetterprognose (optional)",
           "outdoor_temperature": "Außentemperatur (optional)",
           "low_pv_kwh": "PV-Schwelle für Vollladung",
@@ -211,7 +213,7 @@
           "winter_months": "Aktive Monate (1 = Januar)"
         },
         "data_description": {
-          "pv_today": "Der Sensor muss das Attribut detailedHourly liefern.",
+          "pv_today": "Solcast oder ein kompatibler Sensor mit vollständigen Stundenwerten im Attribut detailedHourly.",
           "fallback_load_kw": "Geschätzte mittlere Hauslast für Stunden ohne ausreichende Lerndaten."
         }
       },
@@ -248,12 +250,14 @@
         "title": "Dynamischer Preissensor",
         "description": "Die Netzladung kann unter der Preisgrenze starten und endet oberhalb der Grenze. Genau an der Grenze bleibt eine laufende Ladung freigegeben.",
         "data": {
-          "price_sensor": "Sensor für den aktuellen Strompreis",
-          "price_limit_ct": "Preisgrenze"
+          "price_sensor": "Sensor für den aktuellen Arbeitspreis",
+          "price_limit_ct": "Preisgrenze",
+          "price_max_age_min": "Maximale Zeit ohne Preismeldung"
         },
         "data_description": {
-          "price_sensor": "Unterstützt ct/kWh, EUR/kWh und EUR/MWh sowie das Eurozeichen.",
-          "price_limit_ct": "Gib die Grenze in ct/kWh ein. Beispiel: 20 entspricht 0,20 €/kWh."
+          "price_sensor": "Wähle den Sensor für den aktuell geltenden Preis pro Kilowattstunde. Unterstützt ct/kWh, EUR/kWh und EUR/MWh sowie das Eurozeichen.",
+          "price_limit_ct": "Gib die Grenze in ct/kWh ein. Beispiel: 20 entspricht 0,20 €/kWh.",
+          "price_max_age_min": "Zeit seit der letzten Sensormeldung an Home Assistant. Auch eine neue Meldung mit unverändertem Preis setzt die Frist zurück."
         }
       },
       "operation": {

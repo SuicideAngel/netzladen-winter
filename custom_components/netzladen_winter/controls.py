@@ -69,33 +69,49 @@ class BatteryControl:
         if obj is None or obj.state in UNAVAILABLE or not set(options) <= set(obj.attributes.get("options", [])):
             raise HomeAssistantError(f"{entity_id} bietet die eingestellten Optionen nicht an")
 
+    def matches(self, entity_id, value):
+        state = self.state(entity_id)
+        if isinstance(value, str):
+            return state == value
+        actual = finite(state)
+        return actual is not None and math.isclose(actual, value, abs_tol=1e-6, rel_tol=0)
+
     async def async_write(self, entity_id, value):
         domain = entity_id.split(".", 1)[0]
         if isinstance(value, str):
             action, data = "select_option", {"option": value}
             self.prepare_select(entity_id, value)
-            if self.state(entity_id) == value:
-                return
         else:
             action, data = "set_value", {"value": value}
             self.prepare_number(entity_id, value)
-            if finite(self.state(entity_id)) == value:
-                return
+        if self.matches(entity_id, value):
+            return
         async with asyncio.timeout(8):
             await self.hass.services.async_call(
                 domain, action, {"entity_id": entity_id, **data}, blocking=True,
             )
 
     async def async_confirm(self, checks):
-        async with asyncio.timeout(12):
-            while any(self.state(entity) != value for entity, value in checks.items()):
-                await asyncio.sleep(0.5)
+        try:
+            async with asyncio.timeout(12):
+                while pending := [entity for entity, value in checks.items()
+                                  if not self.matches(entity, value)]:
+                    await asyncio.sleep(0.5)
+        except TimeoutError as err:
+            raise HomeAssistantError(
+                f"Wechselrichter bestätigt die Sollwerte nicht: {', '.join(pending)}"
+            ) from err
 
     def current_price(self):
         if self.settings["tariff_mode"] != "price":
             return None
         entity_id = self.settings.get("price_sensor")
         state = self.hass.states.get(entity_id) if entity_id else None
+        if state is None:
+            return None
+        age = (dt_util.utcnow() - state.last_reported).total_seconds()
+        if not 0 <= age <= self.settings["price_max_age_min"] * 60:
+            return None
         return price_from_state(state)
 
     def is_charging(self):
@@ -158,18 +174,27 @@ class BatteryControl:
 
             if command == "hold":
                 await self.async_write(cfg["command_control"], cfg["stop_option"])
-            await self.async_write(cfg["charge_limit"], limit)
-            await self.async_write(cfg["max_soc_control"], 100)
+            limits = {cfg["charge_limit"]: limit, cfg["max_soc_control"]: 100}
+            for entity, value in limits.items():
+                await self.async_write(entity, value)
+            await self.async_confirm(limits)
+            if not self.can_control():
+                return "idle" if await self.async_release() else "release_pending"
             await self.async_write(cfg["ems_control"], cfg["forced_mode"])
             await self.async_confirm({cfg["ems_state"]: cfg["forced_mode"]})
             if command == "charge":
                 await self.async_write(cfg["forced_power"], power)
+                await self.async_confirm({**limits, cfg["forced_power"]: power})
                 if not self.can_control():
                     return "idle" if await self.async_release() else "release_pending"
                 await self.async_write(cfg["command_control"], cfg["charge_option"])
-                await self.async_confirm({cfg["command_state"]: cfg["charge_option"]})
+                await self.async_confirm({
+                    **limits, cfg["forced_power"]: power, cfg["command_state"]: cfg["charge_option"],
+                })
             else:
                 await self.async_confirm({cfg["command_state"]: cfg["stop_option"]})
+            if not self.can_control():
+                return "idle" if await self.async_release() else "release_pending"
             return command
         except (HomeAssistantError, TimeoutError, OSError) as err:
             LOGGER.warning("Wechselrichtersteuerung fehlgeschlagen: %s", err)
@@ -192,9 +217,15 @@ class BatteryControl:
                     LOGGER.debug("Freigabe von %s: %s", cfg[key], err)
             await self.async_confirm({
                 cfg["ems_state"]: cfg["normal_mode"], cfg["command_state"]: cfg["stop_option"],
+                cfg["forced_power"]: 0,
             })
-            await self.async_write(cfg["charge_limit"], cfg.get("release_limit", cfg["old_limit"]))
-            await self.async_write(cfg["max_soc_control"], cfg["old_max"])
+            limits = {
+                cfg["charge_limit"]: cfg.get("release_limit", cfg["old_limit"]),
+                cfg["max_soc_control"]: cfg["old_max"],
+            }
+            for entity, value in limits.items():
+                await self.async_write(entity, value)
+            await self.async_confirm(limits)
             await self.store.async_remove()
         except (HomeAssistantError, TimeoutError, OSError) as err:
             LOGGER.warning("Freigabe des Wechselrichters steht aus: %s", err)

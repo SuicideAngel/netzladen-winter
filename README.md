@@ -4,15 +4,17 @@
 
 Home-Assistant-Integration für die Netzladung eines Heimspeichers. Sie berechnet den Ziel-Ladestand aus Verbrauch, PV-Prognose und optionalem Wetter. Alle Einstellungen liegen in der Home-Assistant-Oberfläche.
 
+## Voraussetzungen
+
+- **Home Assistant 2026.11 oder neuer.**
+- **Speicher und Wechselrichter:** Home Assistant braucht den aktuellen, minimalen und maximalen Akkuladestand. Speicherkapazität und Backupreserve kannst du auch direkt eingeben. Für die aktive Steuerung braucht es zusätzlich schreibbare Regler und Rückmeldungen. Für Sungrow ist M. Kaisers Modbus-Anbindung ein Beispiel. [Sungrow-Anbindung von M. Kaiser](https://github.com/mkaiser/Sungrow-SHx-Inverter-Modbus-Home-Assistant)
+- **Verbrauch:** Ein fortlaufender Hausverbrauchszähler oder die Zähler für PV, Netz und Batterie zur Berechnung des Verbrauchs. Wenn du Wärmepumpe oder Wallbox berücksichtigen willst, wähle die passenden Energiezähler.
+- **PV-Prognose:** Ein Sensor mit einer vollständigen Stundenprognose. Solcast liefert das passende Format. Andere Quellen kannst du ebenfalls verwenden, wenn ihr Sensor die Stundenwerte als `detailedHourly` mit `period_start` (Zeitstempel mit Zeitzone) und `pv_estimate` bereitstellt. [Solcast für Home Assistant](https://github.com/BJReplay/ha-solcast-solar)
+- **Optional:** Eine Wetterentität mit Stundenprognose und ein Außentemperatursensor. Einen Sensor für den aktuellen Arbeitspreis brauchst du nur beim dynamischen Tarif.
+
 ## Installation
 
-**Voraussetzung:** Home Assistant 2026.11 oder neuer.
-
-1. In HACS unter **⋮ → Benutzerdefinierte Repositories** dieses Repository als **Integration** hinzufügen. [GitHub-Repository](https://github.com/SuicideAngel/netzladen-winter)
-2. **Netzladen Winter** herunterladen und Home Assistant neu starten.
-3. Unter **Einstellungen → Geräte & Dienste → Integration hinzufügen** nach **Netzladen Winter** suchen. Änderungen sind später unter **Konfigurieren** möglich.
-
-Manuell kannst du den Ordner `custom_components/netzladen_winter` in den gleichnamigen Pfad deiner Home-Assistant-Konfiguration kopieren.
+Über HACS als benutzerdefinierte Integration installieren, Home Assistant neu starten und **Netzladen Winter** unter **Einstellungen → Geräte & Dienste → Integration hinzufügen** einrichten.
 
 ## Einrichtung
 
@@ -20,10 +22,12 @@ Manuell kannst du den Ordner `custom_components/netzladen_winter` in den gleichn
 | --- | --- |
 | **Speicher** | Aktueller, minimaler und maximaler Ladestand, Kapazität und Backupreserve. Die Ladegrenzen für Speicher und Netz sind separat einstellbar. Beim Netzladen gilt der kleinere Wert. |
 | **Verbrauch** | Fortlaufender Hauszähler oder Energiebilanz aus PV-, Netz- und Batteriezählern. Bei Bedarf Zähler für Wärmepumpe und Wallbox auswählen. Die Wallbox wird vom gemessenen Hausverbrauch abgezogen. |
-| **Prognose** | Solcast-Sensor mit `detailedHourly`, optional zweiter Prognosesensor, Wetter und Außentemperatur. Bis genug Messwerte vorliegen, gilt die eingestellte Ersatzlast. |
+| **Prognose** | PV-Stundenprognose für heute, optional auch für morgen. Bis genug Messwerte vorliegen, gilt die eingestellte Ersatzlast. |
 | **Tarif** | Festes Fenster ab Mitternacht bis zum einstellbaren Ladeende oder dynamische Freigabe über einen aktuellen Preissensor. Beide Modi gelten in den ausgewählten Monaten. |
 
-Im **dynamischen Modus** kann die Ladung unter der eingestellten Preisgrenze starten. Bei genau der Grenze läuft eine begonnene Ladung weiter. Oberhalb der Grenze oder bei einem ungültigen Preis endet die Freigabe. Der Sensor darf Preise in ct/kWh, EUR/kWh oder EUR/MWh liefern.
+Im **dynamischen Modus** liefert der Preissensor den aktuell geltenden Arbeitspreis pro Kilowattstunde, etwa 18 ct/kWh. Die Ladung kann unter deiner Preisgrenze starten. Bei genau der Grenze läuft eine begonnene Ladung weiter. Oberhalb der Grenze oder bei einem ungültigen Preis endet die Freigabe. Unterstützte Einheiten sind ct/kWh, EUR/kWh und EUR/MWh.
+
+Die Einstellung **Maximale Zeit ohne Preismeldung** zählt ab der letzten Meldung des Sensors an Home Assistant. Bleibt eine neue Meldung länger als die eingestellte Zeit aus, endet die Freigabe auch bei einem zuletzt günstigen Preis. Standard sind 90 Minuten. Eine neue Meldung mit demselben Preis setzt die Frist zurück.
 
 ## Vorschau und Steuerung
 
@@ -31,6 +35,6 @@ Die **Vorschau** ist voreingestellt. Die Integration zeigt Ziel-Ladestand, konse
 
 Für die **aktive Steuerung** wählst du drei Regler für Ladegrenze, Zwangsladeleistung und maximalen SoC, zwei Auswahl-Entitäten für EMS-Modus und Ladebefehl sowie deren tatsächliche Rückmeldungen. Die Leistungsregler können W oder kW verwenden. Ohne gültige Speicherdaten und stündliche PV-Prognose startet keine Netzladung.
 
-Nach dem Laden fordert die Integration Stopp und Eigenverbrauch an und setzt die Regler zurück. Die wiederhergestellte Ladegrenze bleibt auf das eingestellte Speichermaximum begrenzt. Eine ausstehende Freigabe erscheint im Betriebsstatus und als Benachrichtigung. Bei einem Home-Assistant-Ausfall ist die Freigabe erst nach dem Wiederanlauf möglich.
+Die Integration wartet vor dem Start auf die Rückmeldung der eingestellten Reglerwerte. Nach dem Laden fordert sie Stopp und Eigenverbrauch an und prüft auch die zurückgesetzten Regler. Die wiederhergestellte Ladegrenze bleibt auf das eingestellte Speichermaximum begrenzt. Eine ausstehende Freigabe erscheint im Betriebsstatus und als Benachrichtigung. Bei einem Home-Assistant-Ausfall ist die Freigabe erst nach dem Wiederanlauf möglich.
 
 Wenn das alte Sungrow-Paket läuft, schalte vor der Aktivierung `input_boolean.sg_winter_aktiviert` aus und prüfe, dass `input_boolean.sg_winter_uebernommen` aus ist. Eine konkurrierende Automation kannst du als Sperre auswählen. Wechsle vor dem Entfernen der Integration zur Vorschau und prüfe die Freigabe am Wechselrichter.

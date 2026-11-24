@@ -146,6 +146,7 @@ class SetupForms:
         return self.form("price_tariff", {
             "price_sensor": entity("sensor"),
             "price_limit_ct": number(-1000, 1000, "ct/kWh", 0.01),
+            "price_max_age_min": number(1, 1440, "min"),
         })
 
     async def async_step_operation(self, user_input=None):

@@ -14,6 +14,7 @@ DEFAULTS = {
     "charge_w": 3500,
     "tariff_mode": "fixed",
     "price_limit_ct": 20.0,
+    "price_max_age_min": 90,
     "low_pv_kwh": 5.0,
     "buffer_kwh": 1.0,
     "end_time": "05:00:00",

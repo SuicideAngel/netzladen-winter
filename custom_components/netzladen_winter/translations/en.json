@@ -42,8 +42,8 @@
         "title": "Forecast and charge planning",
         "description": "Select forecast sources and charge planning parameters.",
         "data": {
-          "pv_today": "Solcast hourly forecast today",
-          "pv_tomorrow": "Solcast hourly forecast tomorrow (optional)",
+          "pv_today": "Hourly PV forecast for today",
+          "pv_tomorrow": "Hourly PV forecast for tomorrow (optional)",
           "weather": "Hourly weather forecast (optional)",
           "outdoor_temperature": "Outdoor temperature (optional)",
           "low_pv_kwh": "PV threshold for a full charge",
@@ -52,7 +52,7 @@
           "winter_months": "Active months (1 = January)"
         },
         "data_description": {
-          "pv_today": "The sensor must provide the detailedHourly attribute.",
+          "pv_today": "Solcast or a compatible sensor with a complete hourly forecast in the detailedHourly attribute.",
           "fallback_load_kw": "Estimated average household load for hours without sufficient learning data."
         }
       },
@@ -90,11 +90,13 @@
         "description": "Grid charging can start below the price limit and stops above it. At the exact limit, an ongoing charge remains allowed.",
         "data": {
           "price_sensor": "Current electricity price sensor",
-          "price_limit_ct": "Price limit"
+          "price_limit_ct": "Price limit",
+          "price_max_age_min": "Maximum time without a price report"
         },
         "data_description": {
-          "price_sensor": "Supports ct/kWh, EUR/kWh and EUR/MWh, including the euro symbol.",
-          "price_limit_ct": "Enter the limit in ct/kWh. For example, 20 is equivalent to €0.20/kWh."
+          "price_sensor": "Select the sensor for the current energy price per kilowatt-hour. Supports ct/kWh, EUR/kWh and EUR/MWh, including the euro symbol.",
+          "price_limit_ct": "Enter the limit in ct/kWh. For example, 20 is equivalent to €0.20/kWh.",
+          "price_max_age_min": "Time since the sensor last reported to Home Assistant. A fresh report with the same price also resets the timer."
         }
       },
       "operation": {
@@ -201,8 +203,8 @@
         "title": "Forecast and charge planning",
         "description": "Select forecast sources and charge planning parameters.",
         "data": {
-          "pv_today": "Solcast hourly forecast today",
-          "pv_tomorrow": "Solcast hourly forecast tomorrow (optional)",
+          "pv_today": "Hourly PV forecast for today",
+          "pv_tomorrow": "Hourly PV forecast for tomorrow (optional)",
           "weather": "Hourly weather forecast (optional)",
           "outdoor_temperature": "Outdoor temperature (optional)",
           "low_pv_kwh": "PV threshold for a full charge",
@@ -211,7 +213,7 @@
           "winter_months": "Active months (1 = January)"
         },
         "data_description": {
-          "pv_today": "The sensor must provide the detailedHourly attribute.",
+          "pv_today": "Solcast or a compatible sensor with a complete hourly forecast in the detailedHourly attribute.",
           "fallback_load_kw": "Estimated average household load for hours without sufficient learning data."
         }
       },
@@ -249,11 +251,13 @@
         "description": "Grid charging can start below the price limit and stops above it. At the exact limit, an ongoing charge remains allowed.",
         "data": {
           "price_sensor": "Current electricity price sensor",
-          "price_limit_ct": "Price limit"
+          "price_limit_ct": "Price limit",
+          "price_max_age_min": "Maximum time without a price report"
         },
         "data_description": {
-          "price_sensor": "Supports ct/kWh, EUR/kWh and EUR/MWh, including the euro symbol.",
-          "price_limit_ct": "Enter the limit in ct/kWh. For example, 20 is equivalent to €0.20/kWh."
+          "price_sensor": "Select the sensor for the current energy price per kilowatt-hour. Supports ct/kWh, EUR/kWh and EUR/MWh, including the euro symbol.",
+          "price_limit_ct": "Enter the limit in ct/kWh. For example, 20 is equivalent to €0.20/kWh.",
+          "price_max_age_min": "Time since the sensor last reported to Home Assistant. A fresh report with the same price also resets the timer."
         }
       },
       "operation": {
