@@ -37,4 +37,4 @@ Für die **aktive Steuerung** wählst du drei Regler für Ladegrenze, Zwangslade
 
 Die Integration wartet vor dem Start auf die Rückmeldung der eingestellten Reglerwerte. Nach dem Laden fordert sie Stopp und Eigenverbrauch an und prüft auch die zurückgesetzten Regler. Die wiederhergestellte Ladegrenze bleibt auf das eingestellte Speichermaximum begrenzt. Eine ausstehende Freigabe erscheint im Betriebsstatus und als Benachrichtigung. Bei einem Home-Assistant-Ausfall ist die Freigabe erst nach dem Wiederanlauf möglich.
 
-Wenn das alte Sungrow-Paket läuft, schalte vor der Aktivierung `input_boolean.sg_winter_aktiviert` aus und prüfe, dass `input_boolean.sg_winter_uebernommen` aus ist. Eine konkurrierende Automation kannst du als Sperre auswählen. Wechsle vor dem Entfernen der Integration zur Vorschau und prüfe die Freigabe am Wechselrichter.
+Wenn eine andere Automation denselben Speicher steuert, kannst du sie als Sperre auswählen. Wechsle vor dem Entfernen der Integration zur Vorschau und prüfe, ob der Wechselrichter wieder im Eigenverbrauch läuft.
