@@ -125,6 +125,16 @@ class PlannerTest(unittest.TestCase):
         self.assertEqual(self.plan(owned=True)["command"], "release")
         self.assertIsNone(self.plan()["target"])
 
+    def test_accepts_native_datetime_forecast_values(self):
+        for row in self.rows:
+            row["period_start"] = datetime.fromisoformat(row["period_start"]).astimezone(timezone.utc)
+        for row in self.weather:
+            row["datetime"] = datetime.fromisoformat(row["datetime"])
+        result = self.plan()
+        self.assertTrue(result["forecast_valid"])
+        self.assertTrue(result["weather_valid"])
+        self.assertIsNotNone(result["target"])
+
     def test_fog_lowers_pv_and_higher_reserve_can_start_charge(self):
         baseline = self.plan()
         self.assertAlmostEqual(baseline["pv_kwh"], 8.32)

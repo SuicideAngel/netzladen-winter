@@ -28,6 +28,8 @@ def counter_delta(current, previous, limit):
 
 
 def parse_date(value, now):
+    if isinstance(value, datetime.datetime):
+        return value.astimezone(now.tzinfo) if value.tzinfo is not None else None
     try:
         date = datetime.datetime.fromisoformat(value)
     except (TypeError, ValueError):
